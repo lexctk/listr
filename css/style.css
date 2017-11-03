@@ -1,0 +1,44 @@
+.to-do-done > span {
+	text-decoration: line-through!important;
+	color: #868e96;
+}
+.list-group-item {
+	padding: 0;
+}
+
+.list-group-item:hover {
+	background-color: #f8f9fa;
+}
+
+.to-do-item > span {
+	max-width: 100%;
+	overflow-y: hidden;
+}
+
+.to-do-delete {
+	background-color: #F44336;
+	color: white;
+	border-bottom-right-radius: inherit;
+	border-top-right-radius: inherit;
+}
+
+/*forcing top padding to center vertically*/
+.fa.to-do-delete {
+	padding-top: 0.7rem;
+}
+
+.to-do-item .to-do-delete {
+	width: 0;
+	padding-left: 0!important;
+	padding-right: 0!important;
+	transition-property: width, padding;
+	transition-duration: 0.2s;
+	opacity: 0;
+}
+
+.to-do-item:hover .to-do-delete {
+	width: auto;
+	padding-left: 1rem !important;
+	padding-right: 1rem !important;
+	opacity: 1;
+}
