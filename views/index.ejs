@@ -1,24 +1,5 @@
 <% include partials/header %>
 
-	<!-- Jumbotron Header -->	
-	<div class="jumbotron py-lg-2 my-lg-0"><div class="container">
-	  <h2 class="display-3 text-center">Listr</h2>
-	  <hr class="my-4">
-	  <p class="lead text-center">Organize your stuffs!</p>
-	</div></div>
-	
-	<!-- Navbar -->	
-	<nav class="navbar navbar-expand navbar-light bg-light justify-content-between"><div class="container">
-		<div class="navbar-nav mr-auto">
-			<button class="nav-item nav-link btn btn-link" type="button"></button>
-		</div>
-		
-		<div class="navbar-nav my-2 my-lg-0">
-			<button class="nav-item nav-link btn btn-link" type="button"></button>
-		</div>			
-	</div></nav>
-
-
 	<div class="container">
 		<div class="row">
 			<div class="col-md">
@@ -27,10 +8,34 @@
 					<i class="fa fa-pencil" aria-hidden="true"></i>
 				</div>
 				<div>
-					<input class="form-control to-do-add" type="text" placeholder="Add new">
+					<form class="form" action="/todo" method="POST" autocomplete="off">
+						<input class="form-control to-do-add" type="text" placeholder="Add new" name="todo[action]">
+					</form>
 				</div>
 				<div>
 					<ul class="to-do list-group sortable">
+						<% todos.forEach(function (todo) { %>
+							<% 
+								var activeClass = "";
+								if (!todo.active) {
+									activeClass = " todo-inactive"; //only toggle the class if inactive
+								}
+							%>	
+							<li class="list-group-item d-flex align-items-center to-do-item ui-state-default<%= activeClass %>">
+								
+								<i class="fa fa-bars p-2 handle" aria-hidden="true"></i>
+								
+								<!-- update item active/inactive-->
+								<form action="/todo/<%= todo._id %>?_method=PUT" method="POST" class="p-2 to-do-action">
+									<span onClick="this.parentNode.submit();" name="todo[action]"><%= todo.action %></span>
+								</form>
+								
+								<!-- delete button -->
+								<form action="/todo/<%= todo._id %>?_method=DELETE" method="POST" class="to-do-delete ml-auto px-3 align-self-stretch">
+									<i onClick="this.parentNode.submit();" class="fa fa-trash" aria-hidden="true"></i> 
+								</form>
+							</li>							
+						<% }); %> 
 					</ul>					
 				</div>
 			</div>
