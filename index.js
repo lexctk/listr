@@ -7,7 +7,7 @@ var methodOverride = require ("method-override");
 var expressSanitizer = require ("express-sanitizer");
 
 var moment = require('moment');
-var dateFormat = "dddd, MMMM Do YYYY";
+var dateFormat = "MMMM Do YYYY";
 
 mongoose.connect("mongodb://localhost/listr");
 app.use (express.static("public"));
@@ -26,8 +26,33 @@ var todoSchema = new mongoose.Schema ({
     active: {type: Boolean, default: true}
 });
 
+var Todo = mongoose.model("Todo", todoSchema);
+
+//mongoose model config, payments
+var paymentSchema = new  mongoose.Schema ({
+    amountDate: [{
+        amount: Number,
+        date: {type: Date, default: Date.now}
+    }],
+    source: String, 
+    frequency: {
+        type: Number,
+        required: true,
+        min: 0,
+        max: 12,
+        validate : {
+            validator: Number.isInteger,
+            message: '{VALUE} is not an integer value'
+        }
+    },
+    endDate: {type: Date, default: Date.now},
+    category: {type: String, enum: ['Bills', 'Food', 'Savings', 'Credit',  'Household',  'Luxury',  'Clothing']},
+    importance: {type: String, enum: ['Required', 'Optional'] }
+});
+
+var Payment = mongoose.model ("Payment", paymentSchema);
+
 //ROOT route -> todo INDEX
-var Todo = mongoose.model("ToDo", todoSchema);
 app.get("/", function (req, res){
     res.redirect("/todo");
 });
@@ -93,6 +118,120 @@ app.delete ("/todo/:id", function (req, res){
             console.log("Deleted to do item " + req.params.id);
         }
         res.redirect("/todo");
+    });
+});
+
+//finance INDEX
+app.get("/finance", function (req, res) {
+    
+   //get all the payments from the database
+   Payment.find({}, function (error, payments) {
+       if (error) {
+            console.log("Something went wrong listing payments " + error);
+       } else {
+           res.render("finance", {payments : payments});
+       }
+   });
+});
+
+//finance NEW
+app.get("/finance/new", function (req, res) {
+    res.render("new", {Payment : Payment});
+});
+
+//finance CREATE
+app.post("/finance", function (req, res) {
+    //create new payment 
+    var payment = new Payment ({
+        amountDate: [{ 
+                amount: req.body.payment.amount,
+                date: req.body.payment.date
+        }],
+        source: req.body.payment.source, 
+        frequency: req.body.payment.frequency, 
+        endDate: req.body.payment.endDate,
+        category: req.body.payment.category, 
+        importance: req.body.payment.importance
+    });
+    //save to database
+    payment.save( function (error, payment) {
+        if (error) {
+            console.log ("Couldn't save payment to db" + error);
+        } else {
+            console.log ("Added payment to db" + payment);
+            res.redirect("/finance");
+        }
+    });
+});
+
+//finance SHOW
+app.get ("/finance/:id", function (req, res) {
+    Payment.findById (req.params.id, function (error, payment) {
+        if (error) {
+            console.log ("Couldn't show payment page " + error);
+        } else {
+            console.log ("Showing payment page " + req.params.id);
+            res.render("show", { payment : payment });
+        }
+    });
+});
+
+//finance EDIT
+app.get("/finance/:id/edit", function (req, res) {
+    Payment.findById (req.params.id, function (error, payment) {
+        if (error) {
+            console.log ("Couldn't show edit form " + error);
+        } else {
+            console.log ("Edit " + payment);
+            res.render ("edit", { payment : payment, Payment : Payment });
+        }
+    });
+});
+
+//finance UPDATE
+app.put("/finance/:id", function (req, res) {
+    console.log("Starting update");
+    
+    //Stage 1, updating amounts and dates array values
+    for (var i=0; i<req.body.amountDate.length; i++) {
+        Payment.update({
+            'amountDate._id': req.body.amountDate[i].id, 
+            '_id' : req.params.id
+        }, {'$set': {
+            'amountDate.$.amount': req.body.amountDate[i].amount,
+            'amountDate.$.date': req.body.amountDate[i].date
+        }}, function( error ) {
+            if (error) {
+                console.log ("Couldn't update stage 1 " + error);
+            } else {
+                console.log ("Update stage 1 complete");
+            }
+        });
+    }
+    
+    //Stage 2, add new amount and date, if any
+    
+    //Stage 3, update rest of edit fields
+    Payment.findByIdAndUpdate(req.params.id, req.body.payment, function (error, payment) {
+        if (error) {
+            console.log("Couldn't find and update " + error);
+        } else {
+            //update database entry
+            console.log("Update blog entry " + req.params.id);
+            res.redirect("/finance/" + req.params.id);
+        }
+    });
+});
+
+//finance DESTROY
+app.delete ("/finance/:id", function (req, res) {
+    Payment.findByIdAndRemove (req.params.id, function (error) {
+        if (error) {
+            console.log ("Couldn't delete " + error);
+        } else {
+            console.log ("Delete payment " + req.params.id);
+            res.redirect ("/finance");
+        }
     });
 });
 

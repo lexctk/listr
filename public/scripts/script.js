@@ -13,3 +13,8 @@ $( ".sortable" ).disableSelection();
 $(".fa-pencil").on("click", function () {
 	$("input.to-do-add[type='text']").fadeToggle();
 });
+
+//fix for Safari - does not support input type="date"
+if ( $('[type="date"]').prop('type') != 'date' ) {
+    $('[type="date"]').datepicker();
+}

@@ -1,0 +1,69 @@
+<% include partials/header %>
+
+<div class="container">
+    <h1 class="header">Edit Payment</h1>
+
+    <form class="form spacer" action="/finance/<%= payment._id %>?_method=PUT" method="POST">
+        <h3>Amounts:</h3>
+        <% for (i=0; i<payment.amountDate.length; i++) { %>        
+            <div class="form-group">
+                <label for="amount<%= i %>">Amount (+/-)</label>
+                <input id="amount<%= i %>" name="amountDate[<%= i %>][amount]" value="<%= payment.amountDate[i].amount.toFixed(2) %>" type="text" class="form-control">
+            </div>
+    
+            <div class="form-group">
+                <label for="date<%= i %>">Date</label>
+                <input id="date<%= i %>" name="amountDate[<%= i %>][date]" value="<%= payment.amountDate[i].date %>" type="date" class="form-control date">
+            </div> 
+            <div class="form-group">
+                <label for="id<%= i %>">Transaction ID</label>
+                <input id="id<%= i %>" name="amountDate[<%= i %>][id]" value="<%= payment.amountDate[i]._id %>" type="text" class="form-control" readonly>
+            </div> 
+        <% } %>
+        
+        <h3>Payment information</h3>
+        <div class="form-group">
+            <label for="source">Source</label>
+            <input id="source" name="payment[source]" value="<%= payment.source %>" type="text" class="form-control">
+        </div>
+        
+        <div class="form-group">
+            <label for="frequency">Frequency (every x months)</label>
+            <select id="frequency" name="payment[frequency]" class="form-control">
+                <% for (i=Payment.schema.path('frequency').options.min; i<Payment.schema.path('frequency').options.max+1; i++) { 
+                    if (i == payment.frequency) { %>
+                        <option selected><%= i %></option>
+                    <% } else { %>
+                        <option><%= i %></option>
+                    <% }
+                } %>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="endDate">End Date (if recurring)</label>
+            <input id="endDate" name="payment[endDate]" value="<%= payment.endDate %>" type="date" class="form-control date">
+        </div> 
+        
+        <div class="form-group">
+            <label for="category">Category</label>
+            <select id="category" name="payment[category]" value="<%= payment.category %>" class="form-control">
+                <% for (i=0; i<Payment.schema.path('category').enumValues.length; i++) { %>
+                    <option><%= Payment.schema.path('category').enumValues[i] %></option>
+                <% } %>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="importance">Importance</label>
+            <select id="importance" name="payment[importance]" value="<%= payment.importance %>" class="form-control">
+                <% for (i=0; i<Payment.schema.path('importance').enumValues.length; i++) { %>
+                    <option><%= Payment.schema.path('importance').enumValues[i] %></option>
+                <% } %>
+            </select>            
+        </div>        
+        <button class="btn btn-primary" type="submit">Submit</button>
+    </form>       
+</div>
+
+<% include partials/footer %>

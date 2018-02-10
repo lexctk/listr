@@ -1,0 +1,58 @@
+<% include partials/header %>
+
+<div class="container">
+    <h1 class="header">Add New</h1>
+
+    <form class="form" action="/finance" method="POST">
+        
+        <div class="form-group">
+            <label for="amount">Amount (+/-)</label>
+            <input id="amount" name="payment[amount]" placeholder="Amount" type="text" class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label for="date">Date</label>
+            <input id="date" name="payment[date]" placeholder="Date" type="date" class="form-control date">
+        </div>         
+        
+        <div class="form-group">
+            <label for="source">Source</label>
+            <input id="source" name="payment[source]" placeholder="Paid to/from" type="text" class="form-control">
+        </div>
+        
+        <div class="form-group">
+            <label for="frequency">Frequency (every x months)</label>
+            <select id="frequency" name="payment[frequency]" class="form-control">
+                <% for (i=Payment.schema.path('frequency').options.min; i<Payment.schema.path('frequency').options.max+1; i++) { %>
+                    <option><%= i %></option>
+                <% } %>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="endDate">End Date (if recurring)</label>
+            <input id="endDate" name="payment[endDate]" placeholder="End Date" type="date" class="form-control date">
+        </div> 
+        
+        <div class="form-group">
+            <label for="category">Category</label>
+            <select id="category" name="payment[category]" class="form-control">
+                <% for (i=0; i<Payment.schema.path('category').enumValues.length; i++) { %>
+                    <option><%= Payment.schema.path('category').enumValues[i] %></option>
+                <% } %>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="importance">Importance</label>
+            <select id="importance" name="payment[importance]" class="form-control">
+                <% for (i=0; i<Payment.schema.path('importance').enumValues.length; i++) { %>
+                    <option><%= Payment.schema.path('importance').enumValues[i] %></option>
+                <% } %>
+            </select>            
+        </div>        
+        <button class="btn btn-primary" type="submit">Submit</button>
+    </form>       
+</div>
+
+<% include partials/footer %>

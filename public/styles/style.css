@@ -15,19 +15,30 @@
 	overflow-y: hidden;
 }
 
-.to-do-delete {
+.to-do-delete, .btn-danger {
 	background-color: #F44336;
+}
+
+.finance-edit, .btn-primary {
+	background-color: rgba(5, 205, 228, 1);
+}
+
+.finance-edit:hover, .finance-edit:active, .btn-primary:hover, .btn-primary:active {
+	background-color: rgba(4, 150, 167, 1)!important;
+}
+
+.to-do-delete, .finance-edit {
 	color: white;
 	border-bottom-right-radius: inherit;
 	border-top-right-radius: inherit;
 }
 
 /*forcing top padding to center vertically*/
-.to-do-delete > .fa{
-	padding-top: 0.7rem;
+.fa {
+	padding-top: 0.7rem!important;
 }
 
-.to-do-item .to-do-delete {
+.to-do-item .to-do-delete, .payment-item .finance-edit {
 	width: 0;
 	padding-left: 0!important;
 	padding-right: 0!important;
@@ -36,7 +47,7 @@
 	opacity: 0;
 }
 
-.to-do-item:hover .to-do-delete {
+.to-do-item:hover .to-do-delete, .payment-item:hover .finance-edit {
 	width: auto;
 	padding-left: 1rem !important;
 	padding-right: 1rem !important;
@@ -49,4 +60,23 @@
 
 .logo {
 	font-family: 'Allerta Stencil', sans-serif;
+}
+
+.navbar-brand {
+	font-size: 1.6rem;
+}
+
+.dark-link, .dark-link:hover {
+	color: black;
+	text-decoration: none;
+}
+
+.btn {
+	border-color: transparent;
+	border: none;
+}
+
+.separator {
+	border-right: 1px solid rgba(0, 0, 0, 0.2);
+	border-left: 1px solid rgba(0, 0, 0, 0.2);
 }

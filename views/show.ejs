@@ -1,0 +1,49 @@
+<% include partials/header %>
+
+<div class="container">
+    <h3>Amounts:</h3>
+    <ul class="list-group">
+        <% payment.amountDate.forEach (function (amountDate) { %>
+            <li class="list-group-item d-flex justify-content-between">
+                <div class="p-2"><%= moment(amountDate.date).format(dateFormat); %></div>
+                <div class="p-2"><%= amountDate.amount.toFixed(2); %></div>
+            </li>        
+        <% }); %>
+    </ul>
+    
+    <ul class="list-group spacer">    
+        <li class="list-group-item d-flex justify-content-between">
+            <div class="p-2">Payment source:</div>
+            <div class="p-2"><%= payment.source %></div>
+        </li> 
+        
+        <li class="list-group-item d-flex justify-content-between">
+            <div class="p-2">Paid every:</div>
+            <div class="p-2"><%= payment.frequency %> month(s)</div>
+        </li> 
+        
+        <li class="list-group-item d-flex justify-content-between">
+            <div class="p-2">Payment ends:</div>
+            <div class="p-2"><%= moment(payment.endDate).format(dateFormat); %></div>
+        </li> 
+
+        <li class="list-group-item d-flex justify-content-between">
+            <div class="p-2">Payment category:</div>
+            <div class="p-2"><%= payment.category; %></div>
+        </li> 
+        
+        <li class="list-group-item d-flex justify-content-between">
+            <div class="p-2">Payment importance:</div>
+            <div class="p-2"><%= payment.importance; %></div>
+        </li>
+    </ul>
+    <div class="spacer">
+        <a href="/finance/<%= payment._id %>/edit" role="button" class="btn btn-primary">Edit</a>
+        
+        <form action="/finance/<%= payment._id %>?_method=DELETE" method="POST" class="inline float-right">
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>         
+    </div>
+</div>
+
+<% include partials/footer %>

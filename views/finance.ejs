@@ -1,0 +1,71 @@
+<% include partials/header %>
+
+    <%
+    <!-- build html for different payment listings -->
+    let buildHtmlSpending = '';
+    let buildHtmlSpendingRec = '';
+    let buildHtmlIncome = '';
+    let buildHtml = '';
+    
+    payments.forEach (function (payment) { 
+        buildHtml += '<a href="/finance/' + payment._id + '" class="list-group-item list-group-item-action d-flex align-items-center payment-item">';
+        buildHtml += '<div class="amount mr-auto p-2">&euro; ' + payment.amountDate[0].amount.toFixed(2) + '</div>';
+        buildHtml += '<div class="source p-2">' + payment.source + '</div>';
+        buildHtml += '<div class="finance-edit p-2 align-self-stretch"><i class="fa fa-link" aria-hidden="true"></i></div>';
+        buildHtml += '</a>';
+
+        if ( payment.amountDate[0].amount > 0 ) { 
+            if ( payment.frequency > 0 ) {
+                buildHtmlSpendingRec += buildHtml;
+            } else {
+                buildHtmlSpending += buildHtml;
+            }
+        } else {
+            buildHtmlIncome += buildHtml;
+        }
+        buildHtml = '';
+    }) %>
+
+	<div class="container">
+            <a href="/finance/new" class="dark-link d-flex justify-content-center">
+                <h4 class="p-2">Add New</h4>
+                <i class="fa fa-pencil p-2" aria-hidden="true"></i>
+            </a>
+	    <div class="row spacer">
+	        <div class="col-md separator">
+	            <!-- list all recurring payments -->
+				<div class="d-flex align-items-center justify-content-between">
+					<h4>Payments</h4>
+				</div>
+				
+                <div class="list-group">
+                    <%- buildHtmlSpendingRec %>
+                </div>
+	        </div>
+	        
+	        <div class="col-md separator">
+	            <!-- list all one-time payments -->
+				<div class="d-flex align-items-center justify-content-between">
+					<h4>One-Time Payments</h4>
+				</div>
+				
+                <div class="list-group">
+                    <%- buildHtmlSpending %>
+                </div>	            
+	        </div>
+	        
+	        <div class="col-md separator">
+	            <!-- list all income -->
+				<div class="d-flex align-items-center justify-content-between">
+					<h4>Income</h4>
+				</div>
+				
+                <div class="list-group">
+                    <!-- list all recurring payments -->
+                    <%- buildHtmlIncome %>
+                </div>	            
+	        </div>
+	    </div>
+	</div>
+
+<% include partials/footer %>
