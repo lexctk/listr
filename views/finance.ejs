@@ -2,40 +2,67 @@
 
     <%
     <!-- build html for different payment listings -->
+    let today=new Date();
+    
     let buildHtmlSpending = '';
     let buildHtmlSpendingRec = '';
     let buildHtmlIncome = '';
     let buildHtml = '';
     
-    payments.forEach (function (payment) { 
-        buildHtml += '<a href="/finance/' + payment._id + '" class="list-group-item list-group-item-action d-flex align-items-center payment-item">';
-        buildHtml += '<div class="amount mr-auto p-2">&euro; ' + payment.amountDate[0].amount.toFixed(2) + '</div>';
-        buildHtml += '<div class="source p-2">' + payment.source + '</div>';
-        buildHtml += '<div class="finance-edit p-2 align-self-stretch"><i class="fa fa-link" aria-hidden="true"></i></div>';
-        buildHtml += '</a>';
-
-        if ( payment.amountDate[0].amount > 0 ) { 
-            if ( payment.frequency > 0 ) {
-                buildHtmlSpendingRec += buildHtml;
+    let sumSpending = 0;
+    let sumSpendingRec = 0;
+    let sumIncome = 0;
+    
+    let tbd="";
+    
+    payments.forEach (function (payment) {
+        let lastAmount = payment.amountDate.length - 1;
+        
+        if (moment(today).format("MMMM") == moment(payment.amountDate[lastAmount].date).format("MMMM")) { 
+            //only list payments from the current month
+        
+            if (payment.amountDate[lastAmount].date > today) {
+                tbd="tbd";
             } else {
-                buildHtmlSpending += buildHtml;
+                tbd='';
             }
-        } else {
-            buildHtmlIncome += buildHtml;
+            
+            buildHtml += '<div class="list-group-item list-group-item-action d-flex align-items-center payment-item ' + tbd + '">';
+            buildHtml += '<div class="source mr-auto p-2"><div>' + payment.source + '</div><small class="text-muted">' + payment.category + '</small></div>';
+            buildHtml += '<div class="amount p-2 text-right"><div>' + payment.amountDate[lastAmount].amount.toFixed(2) + ' &euro;</div><small class="text-muted">' + moment(payment.amountDate[lastAmount].date).format(dateFormat) + '</small></div>';
+            buildHtml += '<a href="/finance/' + payment._id + '/edit" class="finance-edit p-2 align-self-stretch"><i class="fa fa-pencil" aria-hidden="true"></i></a>';
+            buildHtml += '</div>';
+    
+            if ( payment.amountDate[lastAmount].amount < 0 ) { 
+                if ( payment.frequency > 0 ) {
+                    buildHtmlSpendingRec += buildHtml;
+                    sumSpendingRec += payment.amountDate[lastAmount].amount;
+                } else {
+                    buildHtmlSpending += buildHtml;
+                    sumSpending += payment.amountDate[lastAmount].amount;
+                }
+            } else {
+                buildHtmlIncome += buildHtml;
+                sumIncome += payment.amountDate[lastAmount].amount;
+            }
+            buildHtml = '';
         }
-        buildHtml = '';
     }) %>
 
 	<div class="container">
-            <a href="/finance/new" class="dark-link d-flex justify-content-center">
-                <h4 class="p-2">Add New</h4>
-                <i class="fa fa-pencil p-2" aria-hidden="true"></i>
-            </a>
+	    <h1 class="text-center"><%= moment(today).format("MMMM") %></h1>
+	    <hr width="30%">
+	    
+        <a href="/finance/new" class="dark-link d-flex justify-content-center">
+            <h4 class="p-2">Add New</h4>
+            <i class="fa fa-pencil p-2" aria-hidden="true"></i>
+        </a>
 	    <div class="row spacer">
 	        <div class="col-md separator">
 	            <!-- list all recurring payments -->
 				<div class="d-flex align-items-center justify-content-between">
-					<h4>Payments</h4>
+					<h4 class="p-2">Payments</h4>
+					<h4 class="p-2"><%= sumSpendingRec.toFixed(2) %></h4>
 				</div>
 				
                 <div class="list-group">
@@ -46,7 +73,8 @@
 	        <div class="col-md separator">
 	            <!-- list all one-time payments -->
 				<div class="d-flex align-items-center justify-content-between">
-					<h4>One-Time Payments</h4>
+					<h4 class="p-2">One-Time Payments</h4>
+					<h4 class="p-2"><%= sumSpending.toFixed(2) %></h4>
 				</div>
 				
                 <div class="list-group">
@@ -57,13 +85,21 @@
 	        <div class="col-md separator">
 	            <!-- list all income -->
 				<div class="d-flex align-items-center justify-content-between">
-					<h4>Income</h4>
+					<h4 class="p-2">Income</h4>
+					<h4 class="p-2"><%= sumIncome.toFixed(2) %></h4>
 				</div>
 				
                 <div class="list-group">
-                    <!-- list all recurring payments -->
                     <%- buildHtmlIncome %>
-                </div>	            
+                </div>
+                
+                <div class="spacer"></div>
+                <hr>
+	            <!-- Savings -->
+				<div class="d-flex align-items-center justify-content-between spacer">
+					<h4 class="p-2">Savings</h4>
+					<h4 class="p-2"><%= (sumIncome + sumSpending + sumSpendingRec).toFixed(2) %></h4>
+				</div>
 	        </div>
 	    </div>
 	</div>

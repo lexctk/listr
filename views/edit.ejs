@@ -4,7 +4,7 @@
     <h1 class="header">Edit Payment</h1>
 
     <form class="form spacer" action="/finance/<%= payment._id %>?_method=PUT" method="POST">
-        <h3>Amounts:</h3>
+        <h3>Edit past amounts:</h3>
         <% for (i=0; i<payment.amountDate.length; i++) { %>        
             <div class="form-group">
                 <label for="amount<%= i %>">Amount (+/-)</label>
@@ -21,7 +21,19 @@
             </div> 
         <% } %>
         
-        <h3>Payment information</h3>
+        <h3>Add new payment</h3>
+        <div class="form-group">
+            <label for="newAmount">New Amount (+/-)</label>
+            <input id="newAmount" name="newAmount" type="text" class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label for="newDate>">New Date</label>
+            <input id="newDate" name="newDate" type="date" class="form-control date">
+        </div> 
+            
+            
+        <h3>Edit payment information</h3>
         <div class="form-group">
             <label for="source">Source</label>
             <input id="source" name="payment[source]" value="<%= payment.source %>" type="text" class="form-control">
@@ -63,7 +75,10 @@
             </select>            
         </div>        
         <button class="btn btn-primary" type="submit">Submit</button>
-    </form>       
+    </form>
+    <form action="/finance/<%= payment._id %>?_method=DELETE" method="POST" class="inline float-right">
+        <button type="submit" class="btn btn-danger">Delete</button>
+    </form>      
 </div>
 
 <% include partials/footer %>

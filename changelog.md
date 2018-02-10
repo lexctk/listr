@@ -4,7 +4,21 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 - 
 
-## [0.0.1] - 2018-02-09
+## [0.0.6] - 2018-02-10
+### Added
+- Add sums in finance view
+- Add savings section
+- Can now add new recurring payment when editing payment 
+
+### Changed
+- Finance INDEX page only shows current month by default
+- Show category and date in payment listing
+- Differentiate between confirmed transactions and pending transactions
+- Link to EDIT page instead of SHOW page
+- Add Delete button to EDIT page
+- Styling fixes
+
+## [0.0.5] - 2018-02-09
 ### Added
 - Personal Finance management module
 - Add finance routes INDEX, NEW, CREATE, SHOW, EDIT, UPDATE, DESTROY

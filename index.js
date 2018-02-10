@@ -7,7 +7,7 @@ var methodOverride = require ("method-override");
 var expressSanitizer = require ("express-sanitizer");
 
 var moment = require('moment');
-var dateFormat = "MMMM Do YYYY";
+var dateFormat = "ll";
 
 mongoose.connect("mongodb://localhost/listr");
 app.use (express.static("public"));
@@ -46,7 +46,7 @@ var paymentSchema = new  mongoose.Schema ({
         }
     },
     endDate: {type: Date, default: Date.now},
-    category: {type: String, enum: ['Bills', 'Food', 'Savings', 'Credit',  'Household',  'Luxury',  'Clothing']},
+    category: {type: String, enum: ['Bills', 'Food', 'Savings', 'Credit',  'Household',  'Luxury',  'Clothing', 'Transport', 'Income']},
     importance: {type: String, enum: ['Required', 'Optional'] }
 });
 
@@ -204,12 +204,29 @@ app.put("/finance/:id", function (req, res) {
             if (error) {
                 console.log ("Couldn't update stage 1 " + error);
             } else {
-                console.log ("Update stage 1 complete");
+                console.log ("Update stage 1 complete " + req.params.id);
             }
         });
     }
     
     //Stage 2, add new amount and date, if any
+    if (req.body.newAmount) {
+        console.log("Stage 2 needed, starting");
+        Payment.update({
+            '_id' : req.params.id
+        }, {'$push': {
+            amountDate : {
+                amount: req.body.newAmount,
+                date: req.body.newDate
+            }
+        }}, function( error ) {
+            if (error) {
+                console.log ("Couldn't update stage 2 " + error);
+            } else {
+                console.log ("Update stage 2 complete " + req.params.id);
+            }
+        });
+    }
     
     //Stage 3, update rest of edit fields
     Payment.findByIdAndUpdate(req.params.id, req.body.payment, function (error, payment) {
@@ -217,8 +234,8 @@ app.put("/finance/:id", function (req, res) {
             console.log("Couldn't find and update " + error);
         } else {
             //update database entry
-            console.log("Update blog entry " + req.params.id);
-            res.redirect("/finance/" + req.params.id);
+            console.log("Update stage 3 complete " + req.params.id);
+            res.redirect("/finance");
         }
     });
 });
