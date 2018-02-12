@@ -9,8 +9,12 @@ var expressSanitizer = require ("express-sanitizer");
 var moment = require('moment');
 var dateFormat = "ll";
 
+var Todo = require ("./models/todo");
+var Payment = require ("./models/payment");
+
 mongoose.connect("mongodb://localhost/listr");
-app.use (express.static("public"));
+
+app.use(express.static(__dirname + "/public"));
 app.use (bodyParser.urlencoded( { extended : true } ));
 app.use (methodOverride("_method"));
 app.use (expressSanitizer());
@@ -19,38 +23,6 @@ app.set("view engine", "ejs");
 
 app.locals.moment = moment;
 app.locals.dateFormat = dateFormat;
-
-//mongoose model config, todo list
-var todoSchema = new mongoose.Schema ({
-    action: String, 
-    active: {type: Boolean, default: true}
-});
-
-var Todo = mongoose.model("Todo", todoSchema);
-
-//mongoose model config, payments
-var paymentSchema = new  mongoose.Schema ({
-    amountDate: [{
-        amount: Number,
-        date: {type: Date, default: Date.now}
-    }],
-    source: String, 
-    frequency: {
-        type: Number,
-        required: true,
-        min: 0,
-        max: 12,
-        validate : {
-            validator: Number.isInteger,
-            message: '{VALUE} is not an integer value'
-        }
-    },
-    endDate: {type: Date, default: Date.now},
-    category: {type: String, enum: ['Bills', 'Food', 'Savings', 'Credit',  'Household',  'Luxury',  'Clothing', 'Transport', 'Income']},
-    importance: {type: String, enum: ['Required', 'Optional'] }
-});
-
-var Payment = mongoose.model ("Payment", paymentSchema);
 
 //ROOT route -> todo INDEX
 app.get("/", function (req, res){
@@ -83,7 +55,7 @@ app.post("/todo", function (req, res) {
         if (error) {
             console.log("Couldn't save to database " + error);
         } else {
-            console.log("Added to database " + todo);
+            console.log("Added to database");
             res.redirect ("/todo");
         }
     });
@@ -129,14 +101,14 @@ app.get("/finance", function (req, res) {
        if (error) {
             console.log("Something went wrong listing payments " + error);
        } else {
-           res.render("finance", {payments : payments});
+           res.render("finance/index", {payments : payments});
        }
    });
 });
 
 //finance NEW
 app.get("/finance/new", function (req, res) {
-    res.render("new", {Payment : Payment});
+    res.render("finance/new", {Payment : Payment});
 });
 
 //finance CREATE
@@ -171,7 +143,7 @@ app.get ("/finance/:id", function (req, res) {
             console.log ("Couldn't show payment page " + error);
         } else {
             console.log ("Showing payment page " + req.params.id);
-            res.render("show", { payment : payment });
+            res.render("finance/show", { payment : payment });
         }
     });
 });
@@ -183,7 +155,7 @@ app.get("/finance/:id/edit", function (req, res) {
             console.log ("Couldn't show edit form " + error);
         } else {
             console.log ("Edit " + payment);
-            res.render ("edit", { payment : payment, Payment : Payment });
+            res.render ("finance/edit", { payment : payment, Payment : Payment });
         }
     });
 });
