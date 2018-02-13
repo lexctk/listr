@@ -2,10 +2,12 @@ var mongoose = require("mongoose");
 
 //mongoose model config, payments
 var paymentSchema = new  mongoose.Schema ({
-    amountDate: [{
-        amount: Number,
-        date: {type: Date, default: Date.now}
-    }],
+    amounts: [
+        {
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: "Amounts"
+        }
+    ],
     source: String, 
     frequency: {
         type: Number,

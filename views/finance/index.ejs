@@ -13,37 +13,44 @@
     let sumSpendingRec = 0;
     let sumIncome = 0;
     
-    let tbd="";
-    
     payments.forEach (function (payment) {
-        let lastAmount = payment.amountDate.length - 1;
         
-        if (moment(today).format("MMMM") == moment(payment.amountDate[lastAmount].date).format("MMMM")) { 
-            //only list payments from the current month
+        // list current month only
+        let currentMonth = moment(today).format("MMMM");
         
-            if (payment.amountDate[lastAmount].date > today) {
+        let thisValue = 0;
+        let thisDate = null;
+        let tbd="";
+        
+        // loop through all payments to get the one for current month
+        payment.amounts.forEach (function (amount) {
+            if (moment(amount.date).format("MMMM") == currentMonth) {
+                thisValue = amount.value;
+                thisDate = amount.date;
+            }
+        });
+        if (thisDate) {
+            if (thisDate > today) {
                 tbd="tbd";
-            } else {
-                tbd='';
             }
             
             buildHtml += '<div class="list-group-item list-group-item-action d-flex align-items-center payment-item ' + tbd + '">';
             buildHtml += '<div class="source mr-auto p-2"><div>' + payment.source + '</div><small class="text-muted">' + payment.category + '</small></div>';
-            buildHtml += '<div class="amount p-2 text-right"><div>' + payment.amountDate[lastAmount].amount.toFixed(2) + ' &euro;</div><small class="text-muted">' + moment(payment.amountDate[lastAmount].date).format(dateFormat) + '</small></div>';
+            buildHtml += '<div class="amount p-2 text-right"><div>' + thisValue.toFixed(2) + ' &euro;</div><small class="text-muted">' + moment(thisDate).format(dateFormat) + '</small></div>';
             buildHtml += '<a href="/finance/' + payment._id + '/edit" class="finance-edit p-2 align-self-stretch"><i class="fa fa-pencil" aria-hidden="true"></i></a>';
             buildHtml += '</div>';
     
-            if ( payment.amountDate[lastAmount].amount < 0 ) { 
+            if ( thisValue < 0 ) { 
                 if ( payment.frequency > 0 ) {
                     buildHtmlSpendingRec += buildHtml;
-                    sumSpendingRec += payment.amountDate[lastAmount].amount;
+                    sumSpendingRec += thisValue;
                 } else {
                     buildHtmlSpending += buildHtml;
-                    sumSpending += payment.amountDate[lastAmount].amount;
+                    sumSpending += thisValue;
                 }
             } else {
                 buildHtmlIncome += buildHtml;
-                sumIncome += payment.amountDate[lastAmount].amount;
+                sumIncome += thisValue;
             }
             buildHtml = '';
         }

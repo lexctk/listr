@@ -2,38 +2,47 @@
 
 <div class="container">
     <h1 class="header">Edit Payment</h1>
-
-    <form class="form spacer" action="/finance/<%= payment._id %>?_method=PUT" method="POST">
-        <h3>Edit past amounts:</h3>
-        <% for (i=0; i<payment.amountDate.length; i++) { %>        
+    
+    <% if (payment.amounts.length > 0) { %>
+        <h3 class="spacer">Edit past amounts</h3>
+    <% } %>
+    <% payment.amounts.forEach (function (amount) { %>
+        <form class="form" id="form<%= amount._id %>" action="/finance/<%= payment._id %>/amounts/<%= amount._id %>?_method=PUT" method="POST">
             <div class="form-group">
-                <label for="amount<%= i %>">Amount (+/-)</label>
-                <input id="amount<%= i %>" name="amountDate[<%= i %>][amount]" value="<%= payment.amountDate[i].amount.toFixed(2) %>" type="text" class="form-control">
+                <label for="value<%= amount._id %>">Amount (+/-)</label>
+                <input id="value<%= amount._id %>" name="amount[value]" value="<%= amount.value.toFixed(2) %>" type="text" class="form-control">
             </div>
     
             <div class="form-group">
-                <label for="date<%= i %>">Date</label>
-                <input id="date<%= i %>" name="amountDate[<%= i %>][date]" value="<%= payment.amountDate[i].date %>" type="date" class="form-control date">
+                <label for="date<%= amount._id %>">Date</label>
+                <input id="date<%= amount._id %>" name="amount[date]" value="<%= amount.date %>" type="date" class="form-control date">
             </div> 
-            <div class="form-group">
-                <label for="id<%= i %>">Transaction ID</label>
-                <input id="id<%= i %>" name="amountDate[<%= i %>][id]" value="<%= payment.amountDate[i]._id %>" type="text" class="form-control" readonly>
-            </div> 
-        <% } %>
+        </form>
         
-        <h3>Add new payment</h3>
+        <form id="deleteForm<%= amount._id %>" action="/finance/<%= payment._id %>/amounts/<%= amount._id %>?_method=DELETE" method="POST" class="inline float-right">
+        </form>
+        
+        <button form="form<%= amount._id %>" class="btn btn-primary" type="submit">Submit</button>
+        <button form="deleteForm<%= amount._id %>" type="submit" class="btn btn-danger">Delete</button>
+        
+    <% }); %>
+    
+    <h3 class="spacer">Add new payment</h3>
+    <form class="form" action="/finance/<%= payment._id %>/amounts" method="POST">
         <div class="form-group">
-            <label for="newAmount">New Amount (+/-)</label>
-            <input id="newAmount" name="newAmount" type="text" class="form-control">
+            <label for="newValue">New Amount (+/-)</label>
+            <input id="newValue" name="newAmount[value]" type="text" class="form-control">
         </div>
 
         <div class="form-group">
             <label for="newDate>">New Date</label>
-            <input id="newDate" name="newDate" type="date" class="form-control date">
-        </div> 
-            
-            
-        <h3>Edit payment information</h3>
+            <input id="newDate" name="newAmount[date]" type="date" class="form-control date">
+        </div>
+        <button class="btn btn-primary" type="submit">Submit</button>
+    </form>  
+        
+    <h3 class="spacer">Edit payment information</h3>
+    <form id="paymentForm" class="form" action="/finance/<%= payment._id %>?_method=PUT" method="POST">
         <div class="form-group">
             <label for="source">Source</label>
             <input id="source" name="payment[source]" value="<%= payment.source %>" type="text" class="form-control">
@@ -74,11 +83,13 @@
                 <% } %>
             </select>            
         </div>        
-        <button class="btn btn-primary" type="submit">Submit</button>
     </form>
-    <form action="/finance/<%= payment._id %>?_method=DELETE" method="POST" class="inline float-right">
-        <button type="submit" class="btn btn-danger">Delete</button>
-    </form>      
+    
+    <form id="deleteForm" action="/finance/<%= payment._id %>?_method=DELETE" method="POST" class="inline float-right">
+    </form>
+    
+    <button form="paymentForm" class="btn btn-primary" type="submit">Submit</button>
+    <button form="deleteForm" type="submit" class="btn btn-danger">Delete</button>
 </div>
 
 <% include ../partials/footer %>

@@ -3,10 +3,10 @@
 <div class="container">
     <h3>Amounts:</h3>
     <ul class="list-group">
-        <% payment.amountDate.forEach (function (amountDate) { %>
+        <% payment.amounts.forEach (function (amount) { %>
             <li class="list-group-item d-flex justify-content-between">
-                <div class="p-2"><%= moment(amountDate.date).format(dateFormat); %></div>
-                <div class="p-2"><%= amountDate.amount.toFixed(2); %></div>
+                <div class="p-2"><%= moment(amount.date).format(dateFormat); %></div>
+                <div class="p-2"><%= amount.value.toFixed(2); %></div>
             </li>        
         <% }); %>
     </ul>

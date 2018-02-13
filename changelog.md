@@ -3,11 +3,15 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.0.8] - 2018-02-13
+### Changed
+- Refactoring
+- Schema changes
+
 ## [0.0.7] - 2018-02-12
 ### Changed
 - Code cleanup: models to separate files
 - Finance to separate folder
-
 
 ## [0.0.6] - 2018-02-10
 ### Added
